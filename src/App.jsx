@@ -1,24 +1,34 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import SearchModal from "./components/SearchModal";
-import StaysList from "./components/StaysList";
-import { useDarkMode } from "./hooks/useDarkMode";
+import CardList from "./components/CardList";
 
-export default function App() {
+function App() {
   const [filters, setFilters] = useState({ location: null, guests: 0 });
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [darkMode, setDarkMode] = useDarkMode();
+  const [dark, setDark] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false); // <-- agregar estado modal
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+  }, [dark]);
 
   return (
-    <>
-      <Header onOpenSearch={() => setModalOpen(true)} darkMode={darkMode} setDarkMode={setDarkMode} />
-      <SearchModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSearch={setFilters} />
-      <StaysList filters={filters} />
-      <footer className="flex items-center justify-center p-6">
-        <a href="https://github.com/21Geral/windbnb" target="_blank" className="text-gray-400 dark:text-gray-200 text-sm">
-          Created by <span className="cursor-pointer">21Geral</span> - devChallenges.io
-        </a>
-      </footer>
-    </>
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <Header
+        filters={filters}
+        dark={dark}
+        setDark={setDark}
+        onOpenModal={() => setModalOpen(true)} // <-- pasar función al Header
+      />
+      <SearchModal
+        filters={filters}
+        setFilters={setFilters}
+        open={modalOpen}
+        setOpen={setModalOpen} // <-- pasar al modal
+      />
+      <CardList filters={filters} />
+    </div>
   );
 }
+
+export default App;
